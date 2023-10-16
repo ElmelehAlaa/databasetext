@@ -1,0 +1,87 @@
+CREATE TABLE clienti (
+numero_clienti SERIAL PRIMARY KEY,
+nome VARCHAR(255),
+cognome VARCHAR(255),
+data_nascita DATE,
+regione_residenza VARCHAR(255));///
+///////////////////////////////////
+
+CREATE TABLE fattureGiusta (
+numero_fattura SERIAL PRIMARY KEY,
+tipologia VARCHAR,
+importo int2,
+iva VARCHAR,
+id_cliente VARCHAR,
+data_fattura VARCHAR,
+numero_fornitore int2);
+/////////////////////////////////////
+
+CREATE TABLE prodotti(
+id_prodotto int2 PRIMARY KEY,
+descrizione VARCHAR,
+in_produzione VARCHAR,
+in_commercio int2,
+data_attivazione Date,
+data_disattivazione VARCHAR);
+//////////////////////////////////////////
+CREATE TABLE fornitori(
+numero_fornitore int2 PRIMARY KEY,
+denominazione VARCHAR,
+regione_residenza VARCHAR,
+in_commercio int2);
+//////////////////////////////////////////////
+INSERT INTO Clienti (nome, cognome, data_nascita, regione_residenza)
+VALUES
+    ('Mario', 'Rossi', '1990-05-15', 'Lombardia'),
+    ('Anna', 'Verdi', '1982-12-10', 'Piemonte'),
+    ('Luca', 'Bianchi', '1992-08-22', 'Toscana');
+
+////////////////////////////////////////////////
+
+SELECT nome, cognome FROM Clienti WHERE EXTRACT(YEAR FROM data_nascita) = 1982;
+--------------------------------
+INSERT INTO fatture_esempio (tipologia, importo, iva, id_cliente, data_fattura, numero_fornitore)
+VALUES
+    ('Vendita', 500, '20%', 'CL001', '2023-10-15', 101),
+    ('Vendita', 350, '19%', 'CL002', '2023-10-16', 102),
+    ('Acquisto', 600, '22%', 'CL003', '2023-10-17', 103);
+('A', 600, '22%', 'CL003', '2023-10-17', 103);
+----------------------------------------------------------
+SELECT * FROM  fatture_esempio WHERE iva = '20%';
+----------------------------------------------------------
+SELECT
+    EXTRACT(YEAR FROM TO_DATE(data_fattura, 'YYYY-MM-DD')) AS Anno_Fatturazione,
+    COUNT(*) AS Numero_Fatture,
+    SUM(importo) AS Somma_Importi
+FROM fatture_esempio
+GROUP BY Anno_Fatturazione
+ORDER BY Anno_Fatturazione;
+---------------------------------------------------------
+INSERT INTO prodotti (id_prodotto, descrizione, in_produzione, in_commercio, data_attivazione, data_disattivazione)
+VALUES
+    (1, 'Prodotto A', 'Sì', 1, '2023-10-01', NULL),
+    (2, 'Prodotto B', 'Sì', 1, '2023-09-15', '2023-12-31'),
+    (3, 'Prodotto C', 'No', 0, '2023-08-01', NULL);
+    (4, 'Prodotto A', 'Sì', 1, '2017-10-01', NULL);
+----------------------------------------------------------
+SELECT * FROM prodotti WHERE EXTRACT(YEAR FROM data_attivazione) = 2017;
+--------------------------------------------------------------------------
+SELECT
+    EXTRACT(YEAR FROM TO_DATE(data_fattura, 'YYYY-MM-DD')) AS Anno_Fatturazione,
+    COUNT(*) AS Numero_Fatture_20_Percento
+FROM fatture_esempio
+WHERE iva = '20%'
+GROUP BY Anno_Fatturazione
+ORDER BY Anno_Fatturazione;
+--------------------------------------------------------------------------
+SELECT
+    EXTRACT(YEAR FROM TO_DATE(data_fattura, 'YYYY-MM-DD')) AS Anno_Fatturazione,
+    COUNT(*) AS Numero_Fatture_A
+FROM fatture_esempio
+WHERE tipologia = 'A'
+GROUP BY Anno_Fatturazione
+HAVING COUNT(*) > 2
+ORDER BY Anno_Fatturazione;
+--------------------------------------------------------------------------------
+
+
